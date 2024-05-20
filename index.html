@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <title>PWA Example</title>
+  <style>
+    #install-button {
+      display: none; /* Скрываем кнопку по умолчанию */
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<h1>Welcome to My PWA</h1>
+<button id="install-button">Install App</button>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+              .then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+              }, err => {
+                console.log('ServiceWorker registration failed: ', err);
+              });
+    });
+  }
+
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-button').style.display = 'block';
+  });
+
+  document.getElementById('install-button').addEventListener('click', () => {
+    document.getElementById('install-button').style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+        if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+          window.location.href = '/index.html';
+        }
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      deferredPrompt = null;
+    });
+  });
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    window.location.href = '/index.html';
+  }
+</script>
+</body>
+</html>
