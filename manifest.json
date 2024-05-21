@@ -21,6 +21,10 @@
     {
       "platform": "webapp",
       "url": "https://chinazes432.github.io/pwa/manifest.json"
+    },
+    {
+      "platform": "webapp",
+      "url": "https://music.youtube.come"
     }
   ]
 }
