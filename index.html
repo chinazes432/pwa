@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/pwa/manifest.json">
   <title>PWA Example</title>
   <style>
     body {
@@ -48,7 +48,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('/pwa/service-worker.js')
               .then(registration => {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
               })
@@ -82,11 +82,11 @@
   });
 
   document.getElementById('open-button').addEventListener('click', () => {
-    window.location.href = 'index.html';
+    window.location.href = '/pwa/index.html';
   });
 
   function isStandalone() {
-    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
     console.log('Standalone mode:', isStandaloneMode);
     return isStandaloneMode;
   }
