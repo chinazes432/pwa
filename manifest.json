@@ -17,6 +17,19 @@
       "type": "image/png"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/img.png",
+      "sizes": "640x480",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshots/img.png",
+      "sizes": "640x480",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
   "related_applications": [
     {
       "platform": "webapp",
