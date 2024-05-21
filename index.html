@@ -51,7 +51,8 @@
       navigator.serviceWorker.register('service-worker.js')
               .then(registration => {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
-              }, err => {
+              })
+              .catch(err => {
                 console.log('ServiceWorker registration failed: ', err);
               });
     });
@@ -85,12 +86,16 @@
   });
 
   function isStandalone() {
-    console.log('Standalone mode:', window.matchMedia('(display-mode: standalone)').matches);
-    console.log('Standalone mode:', window.navigator.standalone);
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    console.log('Standalone mode:', isStandaloneMode);
+    return isStandaloneMode;
   }
 
   async function isAppInstalled() {
+    if (!('getInstalledRelatedApps' in navigator)) {
+      console.log('getInstalledRelatedApps is not supported in this browser');
+      return false;
+    }
     try {
       const relatedApps = await navigator.getInstalledRelatedApps();
       console.log('isAppInstalled:', relatedApps);
