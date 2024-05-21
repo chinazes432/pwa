@@ -73,7 +73,7 @@
   }
 
   function isStandalone() {
-    return window.matchMedia('(display-mode: standalone)').matches;
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   }
 
   function redirectToPage() {
