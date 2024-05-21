@@ -3,27 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json"> <!-- Убедитесь, что путь указан правильно -->
+  <link rel="manifest" href="manifest.json">
   <title>PWA Example</title>
   <style>
-    #install-button {
-      display: none; /* Скрываем кнопку по умолчанию */
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .button {
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 15px 30px;
+      font-size: 20px;
       cursor: pointer;
+      border-radius: 5px;
+      margin: 10px;
+    }
+
+    .button:active {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
 <h1>Welcome to My PWA</h1>
-<button id="install-button">Install App</button>
+<button id="install-button" class="button">Install App</button>
+<button id="open-button" class="button" style="display: none;">Open App</button>
 
 <script>
+  let deferredPrompt;
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('service-worker.js')
@@ -35,25 +57,23 @@
     });
   }
 
-  let deferredPrompt;
-
   window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('beforeinstallprompt event fired'); // Отладочное сообщение
+    console.log('beforeinstallprompt event fired');
     e.preventDefault();
     deferredPrompt = e;
-    document.getElementById('install-button').style.display = 'block';
+    if (!isStandalone()) {
+      document.getElementById('install-button').style.display = 'block';
+    }
   });
 
   document.getElementById('install-button').addEventListener('click', () => {
-    console.log('Install button clicked'); // Отладочное сообщение
-    document.getElementById('install-button').style.display = 'none';
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt', isStandalone());
         console.log('User accepted the install prompt');
-        if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-          window.location.href = 'index.html';
-        }
+        document.getElementById('install-button').style.display = 'none';
+        document.getElementById('open-button').style.display = 'block';
       } else {
         console.log('User dismissed the install prompt');
       }
@@ -61,10 +81,35 @@
     });
   });
 
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('App is running in standalone mode'); // Отладочное сообщение
+  document.getElementById('open-button').addEventListener('click', () => {
     window.location.href = 'index.html';
+  });
+
+  function isStandalone() {
+    console.log('Standalone mode:', window.matchMedia('(display-mode: standalone)').matches);
+    console.log('Standalone mode:', window.navigator.standalone);
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   }
+  function isAppInstalled() {
+    return navigator.getInstalledRelatedApps()
+  }
+
+  async function updateUIForPWA() {
+    console.log('isAppInstalled 2', await isAppInstalled());
+    if (isStandalone()) {
+      document.getElementById('open-button').style.display = 'block';
+      document.getElementById('install-button').style.display = 'none';
+    } else {
+      document.getElementById('open-button').style.display = 'none';
+      document.getElementById('install-button').style.display = 'block';
+    }
+  }
+
+  window.addEventListener('load', updateUIForPWA);
+  window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    updateUIForPWA();
+  });
 </script>
 </body>
 </html>
