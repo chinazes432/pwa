@@ -212,10 +212,10 @@
     }
   }
 
-  async function updateUIForPWA() {
+  async function updateUIForPWA(force = false) {
     const appInstalled = await isAppInstalled();
     console.log('App installed:', appInstalled);
-    if (isStandalone() || appInstalled) {
+    if (force || appInstalled) {
       document.getElementById('open-button').style.display = 'block';
       document.getElementById('install-button').style.display = 'none';
     } else {
@@ -230,7 +230,7 @@
 
   window.addEventListener('appinstalled', () => {
     console.log('PWA was installed');
-    updateUIForPWA();
+    updateUIForPWA(true);
   });
 </script>
 </body>
