@@ -20,7 +20,7 @@
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "https://chinazes432.github.io/pwa/"
+      "url": "https://chinazes432.github.io/pwa/manifest.json"
     }
   ]
 }
